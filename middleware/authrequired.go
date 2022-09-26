@@ -20,7 +20,7 @@ func Authrequired() fiber.Handler {
 		})
 
 		if err != nil {
-			return err
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Something went wrong"})
 		}
 
 		payload := token.Claims.(jwt.MapClaims)
