@@ -24,5 +24,3 @@ func init() {
 	linksCollection = client.Database(DBNAME).Collection(linksCollName)
 
 }
-
-// create user

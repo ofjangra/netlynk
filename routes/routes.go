@@ -10,6 +10,8 @@ func Router(app *fiber.App) {
 
 	authRequired := middleware.Authrequired()
 
+	validateuser := middleware.Validateuser()
+
 	router := app
 
 	router.Post("/signup", controllers.Signup)
@@ -25,4 +27,12 @@ func Router(app *fiber.App) {
 	router.Get("/link/:id", controllers.GetALink)
 
 	router.Get("/links/:id", controllers.GetAllLinks)
+
+	router.Get("/profile", authRequired, controllers.Profile)
+
+	router.Put("/editprofile", authRequired, controllers.EditProfile)
+
+	router.Put("/editprofile/photo", authRequired, controllers.EditProfilePhoto)
+
+	router.Get("/user/:username", validateuser, controllers.GetUser)
 }

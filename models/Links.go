@@ -5,7 +5,7 @@ import (
 )
 
 type Links struct {
-	Title      string             `json:"title"`
-	URL        string             `json:"url"`
-	Created_by primitive.ObjectID `json:"created_by"`
+	Title      string             `json:"title" bson:"title"`
+	URL        string             `json:"url" bson:"url"`
+	Created_by primitive.ObjectID `json:"created_by" bson:"created_by"`
 }

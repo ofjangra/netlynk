@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -39,8 +40,9 @@ func Signup(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to create account"})
 	}
+	fmt.Println(newUser)
 
-	if newUser.Username == "" || newUser.Phone == "" || newUser.Password == "" {
+	if newUser.Username == "" || newUser.Email == "" || newUser.Password == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "please provide required credentials"})
 	} else if len(newUser.Username) < 3 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "username too short"})
@@ -58,7 +60,7 @@ func Signup(c *fiber.Ctx) error {
 
 	newUser.ID = primitive.NewObjectID()
 
-	newUser.UserId = newUser.ID.Hex()
+	newUser.PhotoUrl = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
 
 	insertionErr := helpers.CreateUser(newUser)
 

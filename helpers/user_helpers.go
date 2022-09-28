@@ -7,6 +7,7 @@ import (
 
 	"github.com/ofjangra/netlynk_server/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -18,7 +19,7 @@ func CreateUser(user *models.User) error {
 
 	username := user.Username
 
-	userPhone := user.Phone
+	userEmail := user.Email
 
 	foundUser := bson.M{}
 
@@ -30,12 +31,12 @@ func CreateUser(user *models.User) error {
 		return errors.New("username already taken")
 	}
 
-	phoneExists := userCollection.FindOne(ctx, bson.M{"phone": userPhone})
+	emailExists := userCollection.FindOne(ctx, bson.M{"email": userEmail})
 
-	phoneExists.Decode(&foundUser)
+	emailExists.Decode(&foundUser)
 
-	if foundUser["phone"] == userPhone {
-		return errors.New("Phone number already used")
+	if foundUser["email"] == userEmail {
+		return errors.New("Email already used")
 	}
 
 	_, err := userCollection.InsertOne(ctx, user)
@@ -57,4 +58,99 @@ func GetuserByUsername(username string) *mongo.SingleResult {
 
 	return result
 
+}
+
+func GetUserById(id string) (*mongo.SingleResult, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+
+	defer cancel()
+
+	userId, idErr := primitive.ObjectIDFromHex(id)
+
+	if idErr != nil {
+		return nil, idErr
+	}
+
+	result := userCollection.FindOne(ctx, bson.M{"_id": userId})
+
+	return result, nil
+}
+
+func EditProfile(id string, update *models.User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+
+	defer cancel()
+
+	userId, idErr := primitive.ObjectIDFromHex(id)
+
+	if idErr != nil {
+		return errors.New("Failed to update profile")
+	}
+
+	user := new(models.User)
+
+	thisUser := userCollection.FindOne(ctx, bson.M{"_id": userId})
+
+	decodeErr := thisUser.Decode(&user)
+
+	if decodeErr != nil {
+		return errors.New("Failed to update profile")
+	}
+
+	type userDetails struct {
+		username string
+		email    string
+		bio      string
+	}
+
+	query := bson.M{}
+
+	if update.Username != user.Username {
+
+		res := userCollection.FindOne(ctx, bson.M{"username": update.Username})
+		if res.Err() == nil {
+			return errors.New("Username already taken")
+		}
+		query["username"] = update.Username
+	}
+
+	if update.Email != user.Email {
+		res := userCollection.FindOne(ctx, bson.M{"email": update.Email})
+		if res.Err() == nil {
+			return errors.New("Email already taken")
+		}
+		query["email"] = update.Email
+	}
+
+	if update.Bio != user.Bio {
+		query["bio"] = update.Bio
+	}
+
+	_, updateErr := userCollection.UpdateByID(ctx, userId, bson.M{"$set": query})
+
+	if updateErr != nil {
+		return errors.New("Failed to update profile")
+	}
+
+	return nil
+}
+
+func EditProfilePhoto(id string, update bson.M) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+
+	defer cancel()
+
+	userId, idErr := primitive.ObjectIDFromHex(id)
+
+	if idErr != nil {
+		return errors.New("Failed to update profile")
+	}
+
+	_, updateErr := userCollection.UpdateByID(ctx, userId, bson.M{"$set": update})
+
+	if updateErr != nil {
+		return errors.New("Failed to update profile")
+	}
+
+	return nil
 }
