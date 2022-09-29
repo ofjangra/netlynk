@@ -1,1 +1,1 @@
-web: bin/netlynk
+web: netlynk
