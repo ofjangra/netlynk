@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -22,7 +24,19 @@ func main() {
 		AllowOrigins:     "http://localhost:5173",
 		AllowCredentials: true,
 	}))
+
+	app.Static("/", "./dist")
+
 	routes.Router(app)
+
+	indexPath, pathErr := filepath.Abs("./dist/index.html")
+
+	if pathErr != nil {
+		fmt.Println(pathErr)
+	}
+	app.Get("*", func(c *fiber.Ctx) error {
+		return c.SendFile(indexPath)
+	})
 
 	err := app.Listen(port)
 	if err != nil {

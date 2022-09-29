@@ -8,6 +8,11 @@ import (
 )
 
 func Profile(c *fiber.Ctx) error {
+	c.Set("x-content-type-options", "nosniff")
+	c.Set("Content-Type", "text/plain")
+	c.Set("Content-Type", "text/html")
+	c.Set("Content-Type", "text/css")
+	c.Set("Content-Type", "application/json")
 	userId := c.Locals("user_id").(string)
 
 	result, resErr := helpers.GetUserById(userId)
@@ -28,6 +33,11 @@ func Profile(c *fiber.Ctx) error {
 }
 
 func GetUser(c *fiber.Ctx) error {
+	c.Set("x-content-type-options", "nosniff")
+	c.Set("Content-Type", "text/plain")
+	c.Set("Content-Type", "text/html")
+	c.Set("Content-Type", "text/css")
+	c.Set("Content-Type", "application/json")
 	username := c.Params("username")
 
 	user := new(models.User)
@@ -44,6 +54,11 @@ func GetUser(c *fiber.Ctx) error {
 }
 
 func EditProfile(c *fiber.Ctx) error {
+	c.Set("x-content-type-options", "nosniff")
+	c.Set("Content-Type", "text/plain")
+	c.Set("Content-Type", "text/html")
+	c.Set("Content-Type", "text/css")
+	c.Set("Content-Type", "application/json")
 	userId := c.Locals("user_id").(string)
 
 	if userId == "" {
@@ -67,6 +82,11 @@ func EditProfile(c *fiber.Ctx) error {
 }
 
 func EditProfilePhoto(c *fiber.Ctx) error {
+	c.Set("x-content-type-options", "nosniff")
+	c.Set("Content-Type", "text/plain")
+	c.Set("Content-Type", "text/html")
+	c.Set("Content-Type", "text/css")
+	c.Set("Content-Type", "application/json")
 	userId := c.Locals("user_id").(string)
 
 	update := bson.M{}

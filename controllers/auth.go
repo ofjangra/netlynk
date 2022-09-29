@@ -33,6 +33,11 @@ func init() {
 }
 
 func Signup(c *fiber.Ctx) error {
+	c.Set("x-content-type-options", "nosniff")
+	c.Set("Content-Type", "text/plain")
+	c.Set("Content-Type", "text/html")
+	c.Set("Content-Type", "text/css")
+	c.Set("Content-Type", "application/json")
 	newUser := new(models.User)
 
 	err := c.BodyParser(&newUser)
@@ -73,7 +78,11 @@ func Signup(c *fiber.Ctx) error {
 }
 
 func Signin(c *fiber.Ctx) error {
-
+	c.Set("x-content-type-options", "nosniff")
+	c.Set("Content-Type", "text/plain")
+	c.Set("Content-Type", "text/html")
+	c.Set("Content-Type", "text/css")
+	c.Set("Content-Type", "application/json")
 	creds := new(SigninReq)
 
 	user := new(models.User)
