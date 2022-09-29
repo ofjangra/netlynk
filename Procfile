@@ -1,1 +1,1 @@
-web: netlynk
+web: main
