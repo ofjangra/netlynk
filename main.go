@@ -8,13 +8,12 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/joho/godotenv"
 	"github.com/ofjangra/netlynk_server/routes"
 )
 
 func main() {
 
-	godotenv.Load(".env")
+	// godotenv.Load(".env")
 
 	port := os.Getenv("PORT")
 
