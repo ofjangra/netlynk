@@ -2,13 +2,11 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/joho/godotenv"
 	"github.com/ofjangra/netlynk_server/helpers"
 	"github.com/ofjangra/netlynk_server/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -23,11 +21,11 @@ type SigninReq struct {
 var JWTKEY string
 
 func init() {
-	EnvErr := godotenv.Load(".env")
+	// EnvErr := godotenv.Load(".env")
 
-	if EnvErr != nil {
-		log.Fatal(EnvErr)
-	}
+	// if EnvErr != nil {
+	// 	log.Fatal(EnvErr)
+	// }
 
 	JWTKEY = os.Getenv("JWTKEY")
 }
