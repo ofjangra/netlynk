@@ -8,11 +8,7 @@ import (
 )
 
 func Profile(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
+
 	userId := c.Locals("user_id").(string)
 
 	result, resErr := helpers.GetUserById(userId)
@@ -33,11 +29,7 @@ func Profile(c *fiber.Ctx) error {
 }
 
 func GetUser(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
+
 	username := c.Params("username")
 
 	user := new(models.User)
@@ -50,15 +42,11 @@ func GetUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
-	return c.Status(fiber.StatusFound).JSON(fiber.Map{"user": user, "user_props": c.Locals("user_props")})
+	return c.Status(fiber.StatusFound).JSON(fiber.Map{"user": user})
 }
 
 func EditProfile(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
+
 	userId := c.Locals("user_id").(string)
 
 	if userId == "" {
@@ -74,7 +62,7 @@ func EditProfile(c *fiber.Ctx) error {
 	updateErr := helpers.EditProfile(userId, update)
 
 	if updateErr != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": updateErr.Error()})
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"error": updateErr.Error()})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "profile updated"})
@@ -82,11 +70,7 @@ func EditProfile(c *fiber.Ctx) error {
 }
 
 func EditProfilePhoto(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
+
 	userId := c.Locals("user_id").(string)
 
 	update := bson.M{}
@@ -101,7 +85,7 @@ func EditProfilePhoto(c *fiber.Ctx) error {
 	updateErr := helpers.EditProfilePhoto(userId, update)
 
 	if updateErr != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to update profile"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": updateErr.Error()})
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "photo updated"})
 }

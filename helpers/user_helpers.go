@@ -97,12 +97,6 @@ func EditProfile(id string, update *models.User) error {
 		return errors.New("Failed to update profile")
 	}
 
-	type userDetails struct {
-		username string
-		email    string
-		bio      string
-	}
-
 	query := bson.M{}
 
 	if update.Username != user.Username {

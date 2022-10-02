@@ -14,11 +14,7 @@ type link struct {
 }
 
 func CreateOneLink(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
+
 	var newLink models.Links
 
 	if err := c.BodyParser(&newLink); err != nil {
@@ -40,11 +36,6 @@ func CreateOneLink(c *fiber.Ctx) error {
 }
 
 func UpdateOneLink(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
 
 	linkId := c.Params("id")
 
@@ -68,11 +59,6 @@ func UpdateOneLink(c *fiber.Ctx) error {
 }
 
 func DeleteOneLink(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
 	linkId := c.Params("id")
 
 	deleteErr := helpers.DeleteALink(linkId)
@@ -85,11 +71,7 @@ func DeleteOneLink(c *fiber.Ctx) error {
 }
 
 func GetALink(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
+
 	linkId := c.Params("id")
 
 	link := new(models.Links)
@@ -106,11 +88,7 @@ func GetALink(c *fiber.Ctx) error {
 }
 
 func GetAllLinks(c *fiber.Ctx) error {
-	c.Set("x-content-type-options", "nosniff")
-	c.Set("Content-Type", "text/plain")
-	c.Set("Content-Type", "text/html")
-	c.Set("Content-Type", "text/css")
-	c.Set("Content-Type", "application/json")
+
 	createrId := c.Params("id")
 
 	links, err := helpers.GetAllLinks(createrId)
