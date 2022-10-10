@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -39,7 +39,6 @@ func Signup(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to create account"})
 	}
-	fmt.Println(newUser)
 
 	if newUser.Username == "" || newUser.Email == "" || newUser.Password == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "please provide required credentials"})
@@ -56,6 +55,8 @@ func Signup(c *fiber.Ctx) error {
 	}
 
 	newUser.Password = string(passHash)
+	newUser.Email = strings.ToLower(newUser.Email)
+	newUser.Username = strings.ToLower(newUser.Username)
 
 	newUser.ID = primitive.NewObjectID()
 
@@ -87,6 +88,8 @@ func Signin(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Please provide required credentials"})
 	}
 
+	creds.Username = strings.ToLower(creds.Username)
+
 	thisUser := helpers.GetuserByUsername(creds.Username)
 
 	thisUser.Decode(&user)
@@ -110,18 +113,15 @@ func Signin(c *fiber.Ctx) error {
 
 	tokenString, tokenErr := token.SignedString([]byte(JWTKEY))
 
-	cookie := fiber.Cookie{
-		Name:     "netlynk_jwt",
-		Value:    tokenString,
-		Expires:  time.Now().Add(time.Hour * 168),
-		HTTPOnly: true,
-	}
-
 	if tokenErr != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to login"})
 	}
-	c.Cookie(&cookie)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"user": user, "token": tokenString})
 
+}
+
+func Logout(c *fiber.Ctx) error {
+	c.ClearCookie("netlynk_jwt")
+	return c.SendStatus(200)
 }

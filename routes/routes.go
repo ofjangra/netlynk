@@ -12,9 +12,14 @@ func Router(app *fiber.App) {
 
 	router := app
 
+	// AUTH ROUTES
+
 	router.Post("/signup", controllers.Signup)
 
 	router.Post("/signin", controllers.Signin)
+
+	router.Post("/profile/logout", authRequired, controllers.Logout)
+	// LINK ROUTES
 
 	router.Post("/createlink", authRequired, controllers.CreateOneLink)
 
@@ -26,6 +31,8 @@ func Router(app *fiber.App) {
 
 	router.Get("/links/:id", controllers.GetAllLinks)
 
+	//  PROFILE ROUTES
+
 	router.Get("/profile", authRequired, controllers.Profile)
 
 	router.Put("/editprofile", authRequired, controllers.EditProfile)
@@ -33,4 +40,8 @@ func Router(app *fiber.App) {
 	router.Put("/editprofile/photo", authRequired, controllers.EditProfilePhoto)
 
 	router.Get("/user/:username", controllers.GetUser)
+
+	router.Get("/test", authRequired, func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"message": "Hello FIber"})
+	})
 }
