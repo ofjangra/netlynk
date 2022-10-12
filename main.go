@@ -13,8 +13,6 @@ import (
 
 func main() {
 
-	// godotenv.Load(".env")
-
 	port := os.Getenv("PORT")
 
 	app := fiber.New()

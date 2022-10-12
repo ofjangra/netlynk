@@ -25,7 +25,13 @@ func Profile(c *fiber.Ctx) error {
 		c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.Status(fiber.StatusFound).JSON(user)
+	return c.Status(fiber.StatusFound).JSON(fiber.Map{
+		"id":        user.ID,
+		"username":  user.Username,
+		"photo_url": user.PhotoUrl,
+		"email":     user.Email,
+		"bio":       user.Bio,
+	})
 }
 
 func GetUser(c *fiber.Ctx) error {
@@ -42,7 +48,12 @@ func GetUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
-	return c.Status(fiber.StatusFound).JSON(fiber.Map{"user": user})
+	return c.Status(fiber.StatusFound).JSON(fiber.Map{
+		"_id":       user.ID,
+		"photo_url": user.PhotoUrl,
+		"username":  user.Username,
+		"bio":       user.Bio,
+	})
 }
 
 func EditProfile(c *fiber.Ctx) error {
