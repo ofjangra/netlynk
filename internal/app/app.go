@@ -8,19 +8,18 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/joho/godotenv"
 	db_config "github.com/ofjangra/netlynk_server/internal/config/db"
 	"github.com/ofjangra/netlynk_server/internal/routes"
 )
 
-func init() {
-	envLoadErr := godotenv.Load(".env")
+// func init() {
+// 	envLoadErr := godotenv.Load(".env")
 
-	if envLoadErr != nil {
-		log.Fatal("Failed to load environment variables 1", envLoadErr)
-	}
+// 	if envLoadErr != nil {
+// 		log.Fatal("Failed to load environment variables 1", envLoadErr)
+// 	}
 
-}
+// }
 
 func App() {
 
