@@ -1,13 +1,17 @@
-package helpers
+package database
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"time"
 
-	"github.com/ofjangra/netlynk_server/models"
+	db_config "github.com/ofjangra/netlynk_server/internal/config/db"
+	"github.com/ofjangra/netlynk_server/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func CreateALink(link models.Links) error {
@@ -15,10 +19,10 @@ func CreateALink(link models.Links) error {
 
 	defer cancel()
 
-	_, err := linksCollection.InsertOne(ctx, link)
+	_, err := db_config.LinksCollection.InsertOne(ctx, link)
 
 	if err != nil {
-		return err
+		return errors.New("failed to create link")
 	}
 
 	return nil
@@ -32,13 +36,13 @@ func EditALink(id string, update bson.M) error {
 	linkId, idErr := primitive.ObjectIDFromHex(id)
 
 	if idErr != nil {
-		return idErr
+		return errors.New("failed to update the link")
 	}
 
-	updateResult, updateErr := linksCollection.UpdateByID(ctx, linkId, bson.M{"$set": update})
+	_, updateErr := db_config.LinksCollection.UpdateByID(ctx, linkId, bson.M{"$set": update})
 
-	if updateErr != nil || updateResult.UpsertedCount < 1 {
-		return updateErr
+	if updateErr != nil {
+		return errors.New("failed to update the link")
 	}
 
 	return nil
@@ -52,13 +56,13 @@ func DeleteALink(id string) error {
 	linkId, idErr := primitive.ObjectIDFromHex(id)
 
 	if idErr != nil {
-		return idErr
+		return errors.New("failed to delete the link")
 	}
 
-	deleteResult, deleteErr := linksCollection.DeleteOne(ctx, bson.M{"_id": linkId})
+	deleteResult, deleteErr := db_config.LinksCollection.DeleteOne(ctx, bson.M{"_id": linkId})
 
 	if deleteErr != nil || deleteResult.DeletedCount < 1 {
-		return deleteErr
+		return errors.New("failed to update the link")
 	}
 
 	return nil
@@ -73,33 +77,39 @@ func GetALink(id string) (*mongo.SingleResult, error) {
 	linkId, idErr := primitive.ObjectIDFromHex(id)
 
 	if idErr != nil {
-		return nil, idErr
+		return nil, errors.New("failed to fetch link")
 	}
 
-	result := linksCollection.FindOne(ctx, bson.M{"_id": linkId})
+	result := db_config.LinksCollection.FindOne(ctx, bson.M{"_id": linkId})
 
 	return result, nil
 }
 
 // Get All Links of a User
 
-func GetAllLinks(createrId string) ([]primitive.M, error) {
+func GetAllLinks(createrId primitive.ObjectID) ([]primitive.M, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 
 	defer cancel()
 
-	id, idErr := primitive.ObjectIDFromHex(createrId)
+	fmt.Println("creator id", createrId)
 
-	if idErr != nil {
-		return nil, idErr
-	}
+	// id, idErr := primitive.o
+	// fmt.Println(id)
+	// if idErr != nil {
+	// 	fmt.Println("id err : ", idErr)
+	// 	return nil, errors.New("failed to fetch links")
+	// }
 
 	links := []primitive.M{}
 
-	cur, curErr := linksCollection.Find(ctx, bson.M{"created_by": id})
+	opts := options.Find().SetSort(bson.M{"created_on": -1})
+
+	cur, curErr := db_config.LinksCollection.Find(ctx, bson.M{"created_by": createrId}, opts)
 
 	if curErr != nil {
-		return nil, curErr
+		fmt.Println("curr error : ", curErr)
+		return nil, errors.New("failed to fetch links")
 	}
 
 	for cur.Next(context.Background()) {
@@ -108,13 +118,13 @@ func GetAllLinks(createrId string) ([]primitive.M, error) {
 		err := cur.Decode(&link)
 
 		if err != nil {
-			return nil, err
+			fmt.Println("link decode err : ", err)
+			return nil, errors.New("failed to fetch links")
 		}
 
 		links = append(links, link)
 	}
 
 	defer cur.Close(context.Background())
-
 	return links, nil
 }

@@ -1,4 +1,4 @@
-package db
+package config_db
 
 import (
 	"context"
@@ -7,14 +7,15 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func DbInstance() *mongo.Client {
-	// if envErr := godotenv.Load(".env"); envErr != nil {
-	// 	log.Fatal("Failed to load db enviorenment variables")
-	// }
+	if envErr := godotenv.Load(".env"); envErr != nil {
+		log.Fatal("Failed to load db enviorenment variables")
+	}
 
 	DBURI := os.Getenv("DBURI")
 

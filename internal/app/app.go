@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -8,10 +8,23 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/ofjangra/netlynk_server/routes"
+	"github.com/joho/godotenv"
+	db_config "github.com/ofjangra/netlynk_server/internal/config/db"
+	"github.com/ofjangra/netlynk_server/internal/routes"
 )
 
-func main() {
+func init() {
+	envLoadErr := godotenv.Load(".env")
+
+	if envLoadErr != nil {
+		log.Fatal("Failed to load environment variables 1", envLoadErr)
+	}
+
+}
+
+func App() {
+
+	db_config.GetCollections()
 
 	port := os.Getenv("PORT")
 
@@ -22,11 +35,11 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	app.Static("/", "./dist")
+	app.Static("/", "../web")
 
 	routes.Router(app)
 
-	indexPath, pathErr := filepath.Abs("./dist/index.html")
+	indexPath, pathErr := filepath.Abs("../web/index.html")
 
 	if pathErr != nil {
 		fmt.Println(pathErr)
